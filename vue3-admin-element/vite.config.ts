@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import path from 'path'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
@@ -15,7 +15,9 @@ import IconsResolver from 'unplugin-icons/resolver'
 
 const pathSrc = path.resolve(__dirname, 'src')
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd())
+  return {
   plugins: [
     vue(),
     vueJsx(),
@@ -58,4 +60,20 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server:{
+    host:'0.0.0.0',
+    port:Number(env.VITE_APP_PORT) || 3000,
+    open:true, //运行自动打开浏览器
+    // 反向代理解决跨域
+    proxy:{
+      [env.VITE_APP_BASE_API || '/api']:{
+        target:'http://vapi.youlai.tech',
+        changeOrigin:true,
+        rewrite:path =>
+          path.replace(new RegExp('^' + env.VITE_APP_BASE_API || '/api'),'')
+      }
+    }
+
+  }
+  }
 })
