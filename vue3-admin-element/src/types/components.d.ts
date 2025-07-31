@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CommonFooter: typeof import('./../components/commonFooter.vue')['default']
+    CommonHeader: typeof import('./../components/commonHeader.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     Hello: typeof import('./../components/Hello.vue')['default']
     IEpSuccessFilled: typeof import('~icons/ep/success-filled')['default']
